@@ -81,7 +81,6 @@ oscillator.connect(gainNode);
 gainNode.connect(audioCtx.destination);
 var colorCount = 0;
 
-
 function go(){
 var keyElem = keysElement(keys,oscillator,gainNode);
 var keyElements = [].slice.call(keyElem.getElementsByTagName('li'));
