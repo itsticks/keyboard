@@ -5,7 +5,6 @@ const pianoKeys = JSON.parse('[{"number":"108","helmholtz":"b′′′′′","s
 
 
 const keysElement = (keys,oscillator,gainNode) => {
-    oscillator.start();
     var keyboard = document.createElement('ul');
     keyboard.id = keyboard;
 keys.forEach((k,i)=>{
@@ -74,43 +73,55 @@ var oscillator = audioCtx.createOscillator();
 var gainNode = audioCtx.createGain();
 gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
 
-var wave = audioCtx.createPeriodicWave(real, imag);
-//oscillator.setPeriodicWave(wave);
-oscillator.type='square';
-oscillator.connect(gainNode);
-gainNode.connect(audioCtx.destination);
-var colorCount = 0;
-
-function go(){
 var keyElem = keysElement(keys,oscillator,gainNode);
 var keyElements = [].slice.call(keyElem.getElementsByTagName('li'));
-document.body.append(keyElem);
+
+var wave = audioCtx.createPeriodicWave(real, imag);
+//oscillator.setPeriodicWave(wave);
+
+var colorCount = 0;
 
 var frame = 0;
-var frameL = 11; //37,59, 
+var frameL = 7;
 
-// oscillator.frequency.setValueAtTime(parseInt(sequence[0].hz), audioCtx.currentTime); 
+document.getElementById('play').onclick = function(){
+  window.requestAnimationFrame(step);
+}
 
-window.requestAnimationFrame(step);
-
-//oscillator.start();
 
 function step(){
 
-if(frame%frameL==0){
- //   var index = frame/frameL;
- //   var color = keys[index].color
- //   document.body.style.backgroundColor = `rgb(${color.r},${color.g},${color.b})`;
- //   oscillator.frequency.setValueAtTime(parseInt(sequence[index].hz), audioCtx.currentTime);
- keyElements[Math.floor(Math.random()*keyElements.length)].click();
- console.log('clicking',Math.floor(Math.random()*keyElements.length))
-}
+  if(frame%frameL==0){
+   //   var index = frame/frameL;
+   //   var color = keys[index].color
+   //   document.body.style.backgroundColor = `rgb(${color.r},${color.g},${color.b})`;
+   //   oscillator.frequency.setValueAtTime(parseInt(sequence[index].hz), audioCtx.currentTime);
+   keyElements[Math.floor(Math.random()*keyElements.length)].click();
+   console.log('clicking',Math.floor(Math.random()*keyElements.length))
+  }
+  
+  frame++;
+  
+  if(frame >= keyElements.length*frameL){ frame = 0 }
+  
+   window.requestAnimationFrame(step);
+  }
 
-frame++;
+function start(){
+  oscillator.start();
+  oscillator.type='square';
+oscillator.connect(gainNode);
+gainNode.connect(audioCtx.destination);
+document.getElementById('play').style.display='block';
 
-if(frame >= keyElements.length*frameL){ frame = 0 }
+document.body.append(keyElem);
 
- window.requestAnimationFrame(step);
-}
+ //11,37,59, 
+
+// oscillator.frequency.setValueAtTime(parseInt(sequence[0].hz), audioCtx.currentTime); 
+
+
+//oscillator.start();
+
 
 }
