@@ -5,8 +5,8 @@ const pianoKeys = JSON.parse('[{"number":"108","helmholtz":"b′′′′′","s
 const keysElement = (keys,oscillator,gainNode) => {
     var keyboard = document.createElement('ul');
     keyboard.id = keyboard;
-    keyboard.style.margin = '0px auto';
-    keyboard.style.width = 'max-content';
+   // keyboard.style.margin = '0px auto';
+   // keyboard.style.width = 'max-content';
 keys.forEach((k,i)=>{
     var key = document.createElement('li');
     key.style.display = 'inline-block';
@@ -20,6 +20,7 @@ keys.forEach((k,i)=>{
     key.innerHTML = k.name
 
     key.onclick = (e) => {
+      if (!started){ start()};
         let ogColor = key.style.backgroundColor;
         document.body.style.backgroundColor = `rgb(${k.color.r},${k.color.g},${k.color.b})`;
         oscillator.frequency.setValueAtTime(parseInt(k.hz), audioCtx.currentTime);
@@ -35,13 +36,15 @@ keys.forEach((k,i)=>{
             key.style.opacity=1;
             key.style.backgroundColor = ogColor;
            
-        },2000)
+        },500)
     }
 
     keyboard.append(key);
 })
 return keyboard;
 }
+
+var started = false;
 var octaveMiddleC = pianoKeys.filter(x => x.number >= 40 && x.number <= 51).reverse();
 
 const keys = [
@@ -96,12 +99,13 @@ function step(){
   }
   window.requestAnimationFrame(step);
 }
+document.getElementById('container').append(keyElem);
 
 function start(){
+  started = true;
   oscillator.start();
   oscillator.type='square';
   oscillator.connect(gainNode);
   gainNode.connect(audioCtx.destination);
   document.getElementById('play').style.display='block';
-  document.body.append(keyElem);
 }
