@@ -13,6 +13,7 @@ keys.forEach((k,i)=>{
     key.style.display = 'inline-block';
     key.style.border = '1px dotted black';
     key.style.width='30px';
+    key.style.cursor='grab';
     key.style.height= k.name.length > 1 ? '60px' : '100px';
     key.className = k.name.length > 1 ? 'black' : 'white';
     key.style.backgroundColor = k.name.length > 1 ? 'black' : 'white';
@@ -21,6 +22,7 @@ keys.forEach((k,i)=>{
     key.innerHTML = k.name
 
     key.onclick = (e) => {
+      key.style.cursor='grabbing';
       if (!started){ start()};
         let ogColor = key.style.backgroundColor;
         document.body.style.backgroundColor = `rgb(${k.color.r},${k.color.g},${k.color.b})`;
@@ -32,11 +34,11 @@ keys.forEach((k,i)=>{
             0.00001, audioCtx.currentTime + 0.5
           );
         key.style.opacity=0.5;
-
+        
         const timeout = setTimeout(function(){
             key.style.opacity=1;
             key.style.backgroundColor = ogColor;
-           
+            key.style.cursor='grab';
         },500)
     }
 
