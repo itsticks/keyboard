@@ -30,7 +30,7 @@ keys.forEach((k,i)=>{
         gainNode.gain.exponentialRampToValueAtTime(
             1, audioCtx.currentTime + 0.1
           );     
-          gainNode.gain.exponentialRampToValueAtTime(
+        gainNode.gain.exponentialRampToValueAtTime(
             0.00001, audioCtx.currentTime + 0.5
           );
         key.style.opacity=0.5;
@@ -111,13 +111,17 @@ waveSelect.onchange = () => {
   oscillator.type = waveSelect.value;
 }
 
-document.getElementById('container').append(waveSelect,keyElem);
 
 function start(){
   started = true;
-  oscillator.start();
   oscillator.type=waveSelect.value;
   oscillator.connect(gainNode);
   gainNode.connect(audioCtx.destination);
  // document.getElementById('play').style.display='block';
+}
+
+function allow(elem){
+  oscillator.start();
+  elem.style.display='none';
+  document.getElementById('container').append(waveSelect,keyElem);
 }
