@@ -108,5 +108,5 @@ function start(){
   oscillator.type='square';
   oscillator.connect(gainNode);
   gainNode.connect(audioCtx.destination);
-  document.getElementById('play').style.display='block';
+ // document.getElementById('play').style.display='block';
 }
