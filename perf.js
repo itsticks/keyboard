@@ -4,6 +4,7 @@ const pianoKeys = JSON.parse('[{"number":"108","helmholtz":"b′′′′′","s
 
 const keysElement = (keys,oscillator,gainNode) => {
     var keyboard = document.createElement('ul');
+    keyboard.style.padding = '0';
     keyboard.id = keyboard;
    // keyboard.style.margin = '0px auto';
    // keyboard.style.width = 'max-content';
@@ -48,18 +49,18 @@ var started = false;
 var octaveMiddleC = pianoKeys.filter(x => x.number >= 40 && x.number <= 51).reverse();
 
 const keys = [
-    {id:1, name:'c', color: {r:217,g:29,b:2}},
-    {id:2, name:'c♯', color: {r:255,g:34,b:0}},
-    {id:3, name:'d', color:{r:255,g:78,b:1}},
-    {id:4, name:'d♯', color:{r:255,g:148,b:0}},
-    {id:5, name:'e', color:{r:255,g:200,b:0}},
-    {id:6, name:'f',color:{r:255,g:251,b:0}},
-    {id:7, name:'f♯',color:{r:203,g:250,b:0}},
-    {id:8, name:'g', color:{r:0,g:249,b:0}},
-    {id:9, name:'g♯', color:{r:0,g:147,b:147}},
-    {id:10, name:'a',color:{r:1,g:48,b:255}},
-    {id:11, name:'b♭',color:{r:80,g:35,b:205}},
-    {id:12, name:'b',color:{r:151,g:28,b:147}}
+    {id:1, name:'C', color: {r:217,g:29,b:2}},
+    {id:2, name:'C♯', color: {r:255,g:34,b:0}},
+    {id:3, name:'D', color:{r:255,g:78,b:1}},
+    {id:4, name:'D♯', color:{r:255,g:148,b:0}},
+    {id:5, name:'E', color:{r:255,g:200,b:0}},
+    {id:6, name:'F',color:{r:255,g:251,b:0}},
+    {id:7, name:'F♯',color:{r:203,g:250,b:0}},
+    {id:8, name:'G', color:{r:0,g:249,b:0}},
+    {id:9, name:'G♯', color:{r:0,g:147,b:147}},
+    {id:10, name:'A',color:{r:1,g:48,b:255}},
+    {id:11, name:'B♭',color:{r:80,g:35,b:205}},
+    {id:12, name:'B',color:{r:151,g:28,b:147}}
 ].map((x,i)=>{x.hz=octaveMiddleC[i].hz; return x;});
 
 var sequence = keys.filter(x=>x.name>1);
