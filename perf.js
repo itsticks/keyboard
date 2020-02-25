@@ -12,18 +12,18 @@ keys.forEach((k,i)=>{
     var key = document.createElement('li');
     key.style.display = 'inline-block';
     key.style.border = '1px dotted black';
-    key.style.width='30px';
-    key.style.cursor='grab';
-    key.style.height= k.name.length > 1 ? '60px' : '100px';
+    key.style.width = '30px';
+    key.style.cursor = 'grab';
+    key.style.height = k.name.length > 1 ? '60px' : '100px';
     key.className = k.name.length > 1 ? 'black' : 'white';
     key.style.backgroundColor = k.name.length > 1 ? 'black' : 'white';
     key.style.color = k.name.length > 1 ? 'white' : 'black';
     key.append(document.createTextNode(k.name));
-    key.innerHTML = k.name
+    key.innerHTML = k.name;
 
     key.onclick = (e) => {
-      key.style.cursor='grabbing';
-      if (!started){ start()};
+      key.style.cursor = 'grabbing';
+      if (!started){ start() };
         let ogColor = key.style.backgroundColor;
         document.body.style.backgroundColor = `rgb(${k.color.r},${k.color.g},${k.color.b})`;
         oscillator.frequency.setValueAtTime(parseInt(k.hz), audioCtx.currentTime);
@@ -34,11 +34,10 @@ keys.forEach((k,i)=>{
             0.00001, audioCtx.currentTime + 0.5
           );
         key.style.opacity=0.5;
-        
         const timeout = setTimeout(function(){
             key.style.opacity=1;
             key.style.backgroundColor = ogColor;
-            key.style.cursor='grab';
+            key.style.cursor = 'grab';
         },500)
     }
 
@@ -66,7 +65,6 @@ const keys = [
 ].map((x,i)=>{x.hz=octaveMiddleC[i].hz; return x;});
 
 var sequence = keys.filter(x=>x.name>1);
-
 var real = new Float32Array(2);
 var imag = new Float32Array(2);
 real[0] = 0;
@@ -77,16 +75,15 @@ imag[1] = 0;
 var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 var oscillator = audioCtx.createOscillator();
 var gainNode = audioCtx.createGain();
-gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
 
 var keyElem = keysElement(keys,oscillator,gainNode);
 var keyElements = [].slice.call(keyElem.getElementsByTagName('li'));
-
 var wave = audioCtx.createPeriodicWave(real, imag);
-
 var colorCount = 0;
 var frame = 0;
 var frameL = 11; //5,7,11,37,59
+
+gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
 
 document.getElementById('play').onclick = function(){
   window.requestAnimationFrame(step);
@@ -102,12 +99,24 @@ function step(){
   }
   window.requestAnimationFrame(step);
 }
-document.getElementById('container').append(keyElem);
+
+
+var waveSelect = document.createElement('select');
+waveSelect.options.add( new Option("square","square", true, true) );
+waveSelect.options.add( new Option("sine","sine") );
+waveSelect.options.add( new Option("sawtooth","sawtooth") );
+waveSelect.options.add( new Option("triangle","triangle") );
+
+waveSelect.onchange = () => {
+  oscillator.type = waveSelect.value;
+}
+
+document.getElementById('container').append(waveSelect,keyElem);
 
 function start(){
   started = true;
   oscillator.start();
-  oscillator.type='square';
+  oscillator.type=waveSelect.value;
   oscillator.connect(gainNode);
   gainNode.connect(audioCtx.destination);
  // document.getElementById('play').style.display='block';
