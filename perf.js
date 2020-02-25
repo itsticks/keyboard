@@ -5,12 +5,14 @@ const pianoKeys = JSON.parse('[{"number":"108","helmholtz":"b′′′′′","s
 const keysElement = (keys,oscillator,gainNode) => {
     var keyboard = document.createElement('ul');
     keyboard.id = keyboard;
+    keyboard.style.margin = '0px auto';
+    keyboard.style.width = 'max-content';
 keys.forEach((k,i)=>{
     var key = document.createElement('li');
     key.style.display = 'inline-block';
     key.style.border = '1px dotted black';
     key.style.width='30px';
-    key.style.height='100px';
+    key.style.height= k.name.length > 1 ? '60px' : '100px';
     key.className = k.name.length > 1 ? 'black' : 'white';
     key.style.backgroundColor = k.name.length > 1 ? 'black' : 'white';
     key.style.color = k.name.length > 1 ? 'white' : 'black';
@@ -75,11 +77,10 @@ var keyElem = keysElement(keys,oscillator,gainNode);
 var keyElements = [].slice.call(keyElem.getElementsByTagName('li'));
 
 var wave = audioCtx.createPeriodicWave(real, imag);
-//oscillator.setPeriodicWave(wave);
 
 var colorCount = 0;
 var frame = 0;
-var frameL = 7; //7,11,37,59
+var frameL = 11; //5,7,11,37,59
 
 document.getElementById('play').onclick = function(){
   window.requestAnimationFrame(step);
@@ -90,7 +91,9 @@ function step(){
    keyElements[Math.floor(Math.random()*keyElements.length)].click();
   }
   frame++;
-  if(frame >= keyElements.length*frameL){ frame = 0 }
+  if(frame >= keyElements.length*frameL){ 
+    frame = 0 
+  }
   window.requestAnimationFrame(step);
 }
 
