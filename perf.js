@@ -38,10 +38,6 @@ var colorCount = 0;
 var frame = 0;
 var frameL = 11; //5,7,11,37,59
 
-
-
-
-
 var waveSelect = document.createElement('select');
 waveSelect.options.add( new Option("square","square", true, true) );
 waveSelect.options.add( new Option("sine","sine") );
@@ -112,7 +108,6 @@ keys.forEach((k,i)=>{
 })
 
 function step(){
-  //var keyElements = [].slice.call(keyboard.getElementsByTagName('li'));
   if(frame%frameL==0){
    keyElements[Math.floor(Math.random()*keyElements.length)].click();
   }
