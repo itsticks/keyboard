@@ -38,17 +38,7 @@ var colorCount = 0;
 var frame = 0;
 var frameL = 11; //5,7,11,37,59
 
-function step(keyboard){
-  var keyElements = [].slice.call(keyboard.getElementsByTagName('li'));
-  if(frame%frameL==0){
-   keyElements[Math.floor(Math.random()*keyElements.length)].click();
-  }
-  frame++;
-  if(frame >= keyElements.length*frameL){ 
-    frame = 0 
-  }
-  window.requestAnimationFrame(step);
-}
+
 
 
 
@@ -83,6 +73,8 @@ allowButton.onclick = () => {
   keyboard.style.padding = '0';
   keyboard.id = keyboard;
 
+  var keyElements = [];
+
 keys.forEach((k,i)=>{
   var key = document.createElement('li');
   key.style.display = 'inline-block';
@@ -116,7 +108,20 @@ keys.forEach((k,i)=>{
   }
 
   keyboard.append(key);
+  keyElements.push(key);
 })
+
+function step(){
+  //var keyElements = [].slice.call(keyboard.getElementsByTagName('li'));
+  if(frame%frameL==0){
+   keyElements[Math.floor(Math.random()*keyElements.length)].click();
+  }
+  frame++;
+  if(frame >= keyElements.length*frameL){ 
+    frame = 0 
+  }
+  window.requestAnimationFrame(step);
+}
 
 playButton.onclick = () => {
   started = true;
