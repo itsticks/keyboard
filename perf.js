@@ -36,7 +36,7 @@ var keyElem = null;
 //var wave = audioCtx.createPeriodicWave(real, imag);
 var colorCount = 0;
 var frame = 0;
-var frameL = 11; //5,7,11,37,59
+var frameL = 37; //5,7,11,37,59
 
 var waveSelect = document.createElement('select');
 waveSelect.options.add( new Option("square","square", true, true) );
@@ -84,22 +84,29 @@ keys.forEach((k,i)=>{
   key.append(document.createTextNode(k.name));
   key.innerHTML = k.name;
 
-  key.onclick = (e) => {
+  key.onmousedown = (e) => {
     key.style.cursor = 'grabbing';
+  }
+
+  key.onmouseup = (e) => {
+    key.style.cursor = 'grab';
+  }
+
+  key.onclick = (e) => {
       let ogColor = key.style.backgroundColor;
       document.body.style.backgroundColor = `rgb(${k.color.r},${k.color.g},${k.color.b})`;
+      key.style.backgroundColor = `rgb(${k.color.r},${k.color.g},${k.color.b})`;
       oscillator.frequency.setValueAtTime(parseInt(k.hz), audioCtx.currentTime);
       gainNode.gain.exponentialRampToValueAtTime(
-          1, audioCtx.currentTime + 0.1
+          1, audioCtx.currentTime + 0.01
         );     
       gainNode.gain.exponentialRampToValueAtTime(
-          0.00001, audioCtx.currentTime + 0.5
+          0.00001, audioCtx.currentTime + 0.3
         );
       key.style.opacity=0.5;
       const timeout = setTimeout(function(){
           key.style.opacity=1;
           key.style.backgroundColor = ogColor;
-          key.style.cursor = 'grab';
       },500)
   }
 
