@@ -5,6 +5,7 @@ const pianoKeys = JSON.parse('[{"number":"108","helmholtz":"b′′′′′","s
 var started = false;
 var animationCount = 0;
 var octaveMiddleC = pianoKeys.filter(x => x.number >= 40 && x.number <= 51).reverse();
+var level = 1;
 
 const keys = [
     {id:1, name:'C', color: {r:217,g:29,b:2}},
@@ -32,14 +33,34 @@ var frame = 0;
 var frameL = 199; //5,7,11,37,59, 131, 137,199
 
 var waveSelect = document.createElement('select');
-waveSelect.options.add( new Option("square","square", true, true) );
+waveSelect.options.add( new Option("square","square") );
 waveSelect.options.add( new Option("sine","sine") );
 waveSelect.options.add( new Option("sawtooth","sawtooth") );
-waveSelect.options.add( new Option("triangle","triangle") );
+waveSelect.options.add( new Option("triangle","triangle", true, true) );
 
 waveSelect.onchange = () => {
   oscillator.type = waveSelect.value;
 }
+
+var levelSelect = document.createElement('select');
+var levelOptions = [1,2,3,4,5].map((x,i)=>{
+  var option = document.createElement('option');
+  option.value = x;
+  option.id = 'level-'+x;
+  option.append(document.createTextNode(x));
+  option.selected = i==0 ? true: false;
+  option.disabled = i > 0 ? true : false;
+  levelSelect.append(option);
+  return option;
+})
+
+levelSelect.onchange = () => {
+  level = parseInt(levelSelect.value);
+}
+
+var levelSelectLabel = document.createElement('label');
+levelSelectLabel.append(document.createTextNode('level '),levelSelect)
+
 
 var allowButton = document.createElement('button');
 allowButton.append(document.createTextNode('Allow audio?'));
@@ -47,7 +68,7 @@ document.getElementById('container').append(allowButton);
 var randomButton = document.createElement('button');
 randomButton.append(document.createTextNode('random keys ∞'));
 var playButton = document.createElement('button');
-playButton.append(document.createTextNode('play'));
+playButton.append(document.createTextNode('Play'));
 
 allowButton.onclick = () => {
   audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -67,9 +88,13 @@ allowButton.onclick = () => {
 
 keys.forEach((k,i) => {
   var key = document.createElement('li');
+  key.id = k.id;
   key.dataset.name = k.name;
   key.style.display = 'inline-block';
-  key.style.border = '1px dotted black';
+  key.style.borderWidth = '1px';
+  key.style.borderStyle = 'dotted';
+  key.style.borderColor = 'black';
+
   key.style.width = '30px';
   key.style.cursor = 'grab';
   key.style.height = k.name.length > 1 ? '60px' : '100px';
@@ -89,8 +114,10 @@ keys.forEach((k,i) => {
 
   key.onclick = (e) => {
       let ogColor = key.style.backgroundColor;
-      document.body.style.backgroundColor = `rgb(${k.color.r},${k.color.g},${k.color.b})`;
-      key.style.backgroundColor = `rgb(${k.color.r},${k.color.g},${k.color.b})`;
+      let ogBorderColor = key.style.borderColor;
+      //key.style.borderColor = 'gold';
+     // document.body.style.backgroundColor = `rgb(${k.color.r},${k.color.g},${k.color.b})`;
+      key.style.backgroundColor = `red`;
       oscillator.frequency.setValueAtTime(parseInt(k.hz), audioCtx.currentTime);
       gainNode.gain.exponentialRampToValueAtTime(
           1, audioCtx.currentTime + 0.01
@@ -101,6 +128,7 @@ keys.forEach((k,i) => {
       setTimeout(function(){
           key.style.opacity=1;
           key.style.backgroundColor = ogColor;
+          key.style.borderColor = ogBorderColor;
           document.body.style.backgroundColor = `white`;
       },500)
   }
@@ -108,22 +136,41 @@ keys.forEach((k,i) => {
   keyElements.push(key);
 });
 
-function playLevelNotes(notes){
+function Animate(AnimStep){
+    var o={}; // Local Promise variables
+    o.Step=AnimStep.bind(o); // Make o.Step() have this==o
+    return new Promise(function(resolve,reject)
+        {
+        // Remember some local variables
+        o.resolve=resolve;
+        o.start=0;
+        o.id=window.requestAnimationFrame(o.Step);
+        });
+}
+var notes = [];
+
+function playLevelNotes(){
   if(frame%frameL==0 && animationCount < notes.length){
     notes[animationCount].click();
     animationCount++;
     }
-
   frame++;
   if(frame >= notes.length*frameL){frame = 0}
-  if(animationCount < notes.length){window.requestAnimationFrame(() => playLevelNotes(notes));}
-  else {animationCount=0;}
-  console.log(animationCount)
+  if(animationCount < notes.length){
+    window.requestAnimationFrame(this.Step);
+  }
+  else{animationCount=0;this.resolve();}
 }
 
-function play(level){
-  var notes = keyElements.shuffle().slice(0,level+1);
-  window.requestAnimationFrame(()=>playLevelNotes(notes));
+function play(){
+  keyElements.forEach(x=>x.style.borderColor='black');
+  notes = keyElements.shuffle().slice(0,level+1)
+  .sort((a,b)=> parseInt(a.id) - parseInt(b.id));
+  notes.forEach(x=>{x.style.borderColor='red'});
+  window.requestAnimationFrame(() => 
+  Animate(playLevelNotes)
+  .then(()=>Animate(playLevelNotes))
+  );
 }
 
 function randomStep(){
@@ -145,11 +192,14 @@ randomButton.onclick = () => {
 }
 
 playButton.onclick = () => {
-play(3)
+  play()
 }
 
-  document.getElementById('container').append(waveSelect,keyboard,playButton);
+document.getElementById('container').append(keyboard,levelSelectLabel,playButton);
+
 }
+//allowButton.click();
+
 
 
 
