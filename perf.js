@@ -29,7 +29,7 @@ var keyElem = null;
 
 var colorCount = 0;
 var frame = 0;
-var frameL = 37; //5,7,11,37,59
+var frameL = 199; //5,7,11,37,59, 131, 137,199
 
 var waveSelect = document.createElement('select');
 waveSelect.options.add( new Option("square","square", true, true) );
@@ -46,6 +46,8 @@ allowButton.append(document.createTextNode('Allow audio?'));
 document.getElementById('container').append(allowButton);
 var randomButton = document.createElement('button');
 randomButton.append(document.createTextNode('random keys ∞'));
+var playButton = document.createElement('button');
+playButton.append(document.createTextNode('play'));
 
 allowButton.onclick = () => {
   audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -63,8 +65,9 @@ allowButton.onclick = () => {
   keyboard.id = keyboard;
   var keyElements = [];
 
-keys.forEach((k,i)=>{
+keys.forEach((k,i) => {
   var key = document.createElement('li');
+  key.dataset.name = k.name;
   key.style.display = 'inline-block';
   key.style.border = '1px dotted black';
   key.style.width = '30px';
@@ -91,21 +94,37 @@ keys.forEach((k,i)=>{
       oscillator.frequency.setValueAtTime(parseInt(k.hz), audioCtx.currentTime);
       gainNode.gain.exponentialRampToValueAtTime(
           1, audioCtx.currentTime + 0.01
-        );     
+      );     
       gainNode.gain.exponentialRampToValueAtTime(
-          0.00001, audioCtx.currentTime + 0.3
-        );
-      key.style.opacity=0.5;
-      const timeout = setTimeout(function(){
+          0.00001, audioCtx.currentTime + 3.3
+      );
+      setTimeout(function(){
           key.style.opacity=1;
           key.style.backgroundColor = ogColor;
           document.body.style.backgroundColor = `white`;
       },500)
   }
-
   keyboard.append(key);
   keyElements.push(key);
 });
+
+function playLevelNotes(notes){
+  if(frame%frameL==0 && animationCount < notes.length){
+    notes[animationCount].click();
+    animationCount++;
+    }
+
+  frame++;
+  if(frame >= notes.length*frameL){frame = 0}
+  if(animationCount < notes.length){window.requestAnimationFrame(() => playLevelNotes(notes));}
+  else {animationCount=0;}
+  console.log(animationCount)
+}
+
+function play(level){
+  var notes = keyElements.shuffle().slice(0,level+1);
+  window.requestAnimationFrame(()=>playLevelNotes(notes));
+}
 
 function randomStep(){
   if(frame%frameL==0){
@@ -115,23 +134,24 @@ function randomStep(){
     }
   }
   frame++;
-  if(frame >= keyElements.length*frameL){ 
-    frame = 0 
-  }
-  if(animationCount<12){
-    window.requestAnimationFrame(randomStep);
-  }
-  else {
-    animationCount=0;
-  }
+  if(frame >= keyElements.length*frameL){frame = 0}
+  if(animationCount<12){window.requestAnimationFrame(randomStep);}
+  else {animationCount=0;}
 }
 
 randomButton.onclick = () => {
   started = true;
   window.requestAnimationFrame(randomStep);
 }
-  document.getElementById('container').append(waveSelect,keyboard,randomButton);
+
+playButton.onclick = () => {
+play(3)
 }
+
+  document.getElementById('container').append(waveSelect,keyboard,playButton);
+}
+
+
 
 
 
