@@ -95,9 +95,9 @@ keys.forEach((k,i) => {
   key.style.borderStyle = 'dotted';
   key.style.borderColor = 'black';
 
-  key.style.width = '30px';
+  key.style.width = '7%';
   key.style.cursor = 'grab';
-  key.style.height = k.name.length > 1 ? '60px' : '100px';
+  key.style.height = k.name.length > 1 ? '30%' : '50%';
   key.className = k.name.length > 1 ? 'black' : 'white';
   key.style.backgroundColor = k.name.length > 1 ? 'black' : 'white';
   key.style.color = k.name.length > 1 ? 'white' : 'black';
@@ -123,7 +123,7 @@ keys.forEach((k,i) => {
           1, audioCtx.currentTime + 0.01
       );     
       gainNode.gain.exponentialRampToValueAtTime(
-          0.00001, audioCtx.currentTime + 3.3
+          0.00001, audioCtx.currentTime + 1.3
       );
       setTimeout(function(){
           key.style.opacity=1;
@@ -159,17 +159,28 @@ function playLevelNotes(){
   if(animationCount < notes.length){
     window.requestAnimationFrame(this.Step);
   }
-  else{animationCount=0;this.resolve();}
+  else{
+    animationCount=0;
+    this.resolve();
+  }
 }
 
 function play(){
-  keyElements.forEach(x=>x.style.borderColor='black');
+  keyElements.forEach(x=>{
+    x.style.borderColor='black';
+    x.style.borderWidth = '1px';
+    x.style.borderStyle = 'dotted';
+  });
   notes = keyElements.shuffle().slice(0,level+1)
   .sort((a,b)=> parseInt(a.id) - parseInt(b.id));
-  notes.forEach(x=>{x.style.borderColor='red'});
+  notes.forEach(x=>{
+    x.style.borderColor='red';
+    x.style.borderWidth = '2px';
+    x.style.borderStyle = 'solid';
+  });
   window.requestAnimationFrame(() => 
   Animate(playLevelNotes)
-  .then(()=>Animate(playLevelNotes))
+  .then(() => playButton.disabled = false )
   );
 }
 
@@ -192,7 +203,8 @@ randomButton.onclick = () => {
 }
 
 playButton.onclick = () => {
-  play()
+  playButton.disabled = true;
+  play();
 }
 
 document.getElementById('container').append(keyboard,levelSelectLabel,playButton);
