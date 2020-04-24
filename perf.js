@@ -20,50 +20,45 @@ keys.forEach((k,i) => {
   key.style.display = 'inline-block';
   key.style.borderWidth = '1px';
   key.style.borderStyle = 'dotted';
-  key.style.borderColor = 'black';
+  let ogBorderColor = 'black';
+  key.style.borderColor = ogBorderColor;
 
   key.style.width = '7%';
   key.style.cursor = 'grab';
   key.style.height = k.name.length > 1 ? '30%' : '50%';
   key.className = k.name.length > 1 ? 'black' : 'white';
-  key.style.backgroundColor = k.name.length > 1 ? 'black' : 'white';
+  let ogBgColor = k.name.length > 1 ? 'black' : 'white';
+  key.style.backgroundColor = ogBgColor;
   key.style.color = k.name.length > 1 ? 'white' : 'black';
   key.append(document.createTextNode(k.name));
   key.innerHTML = k.name;
 
   key.onmousedown = (e) => {
     key.style.cursor = 'grabbing';
+    let startTime = audioCtx.currentTime;
+    //key.style.borderColor = 'gold';
+   // document.body.style.backgroundColor = `rgb(${k.color.r},${k.color.g},${k.color.b})`;
+    key.style.backgroundColor = `red`;
+    oscillator.frequency.setValueAtTime(parseInt(k.hz), audioCtx.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(
+        1, audioCtx.currentTime + 0.01
+    );     
+    gainNode.gain.exponentialRampToValueAtTime(
+        0.00001, audioCtx.currentTime + 1.3
+    );    
   }
 
   key.onmouseup = (e) => {
     key.style.cursor = 'grab';
+    key.style.opacity=1;
+            key.style.backgroundColor = ogBgColor;
+            key.style.borderColor = ogBorderColor;
+            document.body.style.backgroundColor = `white`;
   }
 
-  key.onclick = (e) => {
-      let ogColor = key.style.backgroundColor;
-      let ogBorderColor = key.style.borderColor;
-      //key.style.borderColor = 'gold';
-     // document.body.style.backgroundColor = `rgb(${k.color.r},${k.color.g},${k.color.b})`;
-      key.style.backgroundColor = `red`;
-      oscillator.frequency.setValueAtTime(parseInt(k.hz), audioCtx.currentTime);
-      gainNode.gain.exponentialRampToValueAtTime(
-          1, audioCtx.currentTime + 0.01
-      );     
-      gainNode.gain.exponentialRampToValueAtTime(
-          0.00001, audioCtx.currentTime + 1.3
-      );
-      setTimeout(function(){
-          key.style.opacity=1;
-          key.style.backgroundColor = ogColor;
-          key.style.borderColor = ogBorderColor;
-          document.body.style.backgroundColor = `white`;
-      },500)
-  }
   keyboard.append(key);
   keyElements.push(key);
 });
-
-
 
 document.getElementById('container').append(keyboard,levelSelectLabel,playButton);
 }
@@ -83,7 +78,6 @@ function play(){
   });
   playLevelNotes();
 }
-
 
 function pickNotes(){
 
@@ -157,7 +151,6 @@ var randomButton = document.createElement('button');
 randomButton.append(document.createTextNode('random keys ∞'));
 var playButton = document.createElement('button');
 playButton.append(document.createTextNode('Play'));
-
 
 allowButton.onclick = () => {
   createKeyboard();
