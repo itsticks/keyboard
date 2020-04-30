@@ -1,9 +1,14 @@
+for(i = 0; i < 1114112; i++){
+    document.body.append(document.createTextNode(String.fromCharCode(i)));
+}
+
 function createKeyboard(){
   
   allowButton.style.display='none';
 
   var keyboard = document.createElement('ul');
   keyboard.style.padding = '0';
+  keyboard.style.width='100%';
   keyboard.id = keyboard;
 
 keys.forEach((k,i) => {
@@ -44,17 +49,18 @@ keys.forEach((k,i) => {
         1, audioCtx.currentTime + 0.01
     );     
     gainNode.gain.exponentialRampToValueAtTime(
-        0.00001, audioCtx.currentTime + 1.3
+        0.00001, audioCtx.currentTime + 2.3
     );    
+    setTimeout(function(){
+          key.style.cursor = 'grab';
+          key.style.opacity = 1;
+          key.style.backgroundColor = ogBgColor;
+          key.style.borderColor = ogBorderColor;
+          document.body.style.backgroundColor = `white`;
+    },1000)
   }
 
-  key.onmouseup = (e) => {
-    key.style.cursor = 'grab';
-    key.style.opacity=1;
-            key.style.backgroundColor = ogBgColor;
-            key.style.borderColor = ogBorderColor;
-            document.body.style.backgroundColor = `white`;
-  }
+
 
   keyboard.append(key);
   keyElements.push(key);
@@ -126,6 +132,7 @@ waveSelect.onchange = () => {
 }
 
 var levelSelect = document.createElement('select');
+
 var levelOptions = [1,2,3,4,5].map((x,i)=>{
   var option = document.createElement('option');
   option.value = x;
