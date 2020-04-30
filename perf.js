@@ -1,6 +1,6 @@
-for(i = 0; i < 1114112; i++){
-    document.body.append(document.createTextNode(String.fromCharCode(i)));
-}
+// for(i = 0; i < 1114112; i++){
+//     document.body.append(document.createTextNode(String.fromCharCode(i)));
+// }
 
 function createKeyboard(){
   
