@@ -5,7 +5,6 @@
 function createKeyboard(){
   
   allowButton.style.display='none';
-
   var keyboard = document.createElement('ul');
   keyboard.style.padding = '0';
   keyboard.style.width='100%';
@@ -28,28 +27,25 @@ keys.forEach((k,i) => {
   let ogBorderColor = 'black';
   key.style.borderColor = ogBorderColor;
 
-  key.style.width = '7%';
+  key.style.width = (Math.floor(99/noOfKeys)).toString().concat('%');
   key.style.cursor = 'grab';
-  key.style.height = k.name.length > 1 ? '30%' : '50%';
-  key.className = k.name.length > 1 ? 'black' : 'white';
-  let ogBgColor = k.name.length > 1 ? 'black' : 'white';
+  key.style.height = k.color === 'black' ? '30%' : '50%';
+  key.className = k.color;
+  let ogBgColor = k.color;
   key.style.backgroundColor = ogBgColor;
-  key.style.color = k.name.length > 1 ? 'white' : 'black';
+  key.style.color = k.color === 'black' ? 'white' : 'black';
   key.append(document.createTextNode(k.name));
   key.innerHTML = k.name;
 
   key.onmousedown = (e) => {
     key.style.cursor = 'grabbing';
-    let startTime = audioCtx.currentTime;
-    //key.style.borderColor = 'gold';
-   // document.body.style.backgroundColor = `rgb(${k.color.r},${k.color.g},${k.color.b})`;
     key.style.backgroundColor = `red`;
     oscillator.frequency.setValueAtTime(parseInt(k.hz), audioCtx.currentTime);
     gainNode.gain.exponentialRampToValueAtTime(
         1, audioCtx.currentTime + 0.01
     );     
     gainNode.gain.exponentialRampToValueAtTime(
-        0.00001, audioCtx.currentTime + 2.3
+        0.00001, audioCtx.currentTime + 4.3
     );    
     setTimeout(function(){
           key.style.cursor = 'grab';
@@ -59,8 +55,6 @@ keys.forEach((k,i) => {
           document.body.style.backgroundColor = `white`;
     },1000)
   }
-
-
 
   keyboard.append(key);
   keyElements.push(key);
@@ -89,6 +83,11 @@ function pickNotes(){
 
 }
 
+
+function keyColour(name){
+return name.indexOf('♯') > -1 ? 'black' : 'white'; 
+}
+
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
 var notes = [];
@@ -96,23 +95,20 @@ var keyElements = [];
 //
 var started = false;
 var animationCount = 0;
-var octaveMiddleC = pianoKeys.filter(x => x.number >= 40 && x.number <= 51).reverse();
+var middleC = 40;
+var noOfKeys = 10;
+var middlePosition = (Math.ceil(noOfKeys/2));
+var keyset = pianoKeys.filter(x => x.number >= middleC-middlePosition && x.number <= middleC+middlePosition-1);
 var level = 1;
 
-const keys = [
-    {id:1, name:'C', color: {r:217,g:29,b:2}},
-    {id:2, name:'C♯', color: {r:255,g:34,b:0}},
-    {id:3, name:'D', color:{r:255,g:78,b:1}},
-    {id:4, name:'D♯', color:{r:255,g:148,b:0}},
-    {id:5, name:'E', color:{r:255,g:200,b:0}},
-    {id:6, name:'F',color:{r:255,g:251,b:0}},
-    {id:7, name:'F♯',color:{r:203,g:250,b:0}},
-    {id:8, name:'G', color:{r:0,g:249,b:0}},
-    {id:9, name:'G♯', color:{r:0,g:147,b:147}},
-    {id:10, name:'A',color:{r:1,g:48,b:255}},
-    {id:11, name:'B♭',color:{r:80,g:35,b:205}},
-    {id:12, name:'B',color:{r:151,g:28,b:147}}
-].map((x,i)=>{x.hz=octaveMiddleC[i].hz; return x;});
+const keys = 
+keyset.map((x,i)=>{
+  x.id=i;
+  x.name=x.scientific;
+  x.color=keyColour(x.scientific);
+  return x;
+}).reverse();
+
 
 var sequence = keys.filter(x=>x.name>1);
 var keyElem = null;
@@ -122,10 +118,10 @@ var frame = 0;
 var frameL = 199; //5,7,11,37,59, 131, 137,199 (prime number selection)
 
 var waveSelect = document.createElement('select');
-waveSelect.options.add( new Option("square","square") );
-waveSelect.options.add( new Option("sine","sine") );
-waveSelect.options.add( new Option("sawtooth","sawtooth") );
-waveSelect.options.add( new Option("triangle","triangle", true, true) );
+waveSelect.options.add(new Option("square","square"));
+waveSelect.options.add(new Option("sine","sine"));
+waveSelect.options.add(new Option("sawtooth","sawtooth"));
+waveSelect.options.add(new Option("triangle","triangle", true, true));
 
 waveSelect.onchange = () => {
   oscillator.type = waveSelect.value;
@@ -152,7 +148,7 @@ var levelSelectLabel = document.createElement('label');
 levelSelectLabel.append(document.createTextNode('level '),levelSelect)
 
 var allowButton = document.createElement('button');
-allowButton.append(document.createTextNode('Allow audio?'));
+allowButton.append(document.createTextNode('Keyboard'));
 document.getElementById('container').append(allowButton);
 var randomButton = document.createElement('button');
 randomButton.append(document.createTextNode('random keys ∞'));

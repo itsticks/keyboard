@@ -1,21 +1,36 @@
 <html>
-
 <head>
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-<title>test your musical pitch</title>
+<title>test your ear for relative pitch</title>
+<style>
+    * {padding:0;margin:0}
+    
+    @keyframes colorchange {
+  0%   {color: black;}
+  25%  {color: silver;}
+  50%  {color: greenyellow;}
+  100% {color: black;}
+}
 
+/* The element to apply the animation to */
+.colorchange-animation {
+  animation-name: colorchange;
+  animation-duration: 8s;
+  animation-iteration-count:infinite;
+}
+</style>
 </head>
 
 <body>
 
 <div id='container' style='width:100%;text-align:center;margin:0px auto;'>
-    <h1>♫⍰<br/>musical pitch test</h1>
+    <h1><span class='colorchange-animation'>♫</span> pitch test</h1>
 </div>
 
 <script src='helpers.js'></script>
 <script src='pianoKeys.js'></script>
-<script src='perf.js'></script>
+<script src='app.js'></script>
 
 </body>
 
