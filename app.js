@@ -3,12 +3,27 @@
 // }
 
 function createKeyboard(){
+  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   
   allowButton.style.display='none';
   var keyboard = document.createElement('ul');
   keyboard.style.padding = '0';
   keyboard.style.width='100%';
   keyboard.id = keyboard;
+
+  var middleC = 40;
+  var noOfKeys = keyboardRange.value;
+  var middlePosition = (Math.ceil(noOfKeys/2));
+  var keyset = pianoKeys.filter(x => x.number >= middleC-middlePosition && x.number <= middleC+middlePosition-1);
+
+const keys = 
+keyset.map((x,i)=>{
+  x.id=i;
+  x.name=x.scientific;
+  x.color=keyColour(x.scientific);
+  return x;
+}).reverse();
+
 
 keys.forEach((k,i) => {
   let oscillator = audioCtx.createOscillator();
@@ -59,8 +74,8 @@ keys.forEach((k,i) => {
   keyboard.append(key);
   keyElements.push(key);
 });
-
-document.getElementById('container').append(keyboard);
+document.getElementById('container').innerHTML = "";
+document.getElementById('container').append(keyboard, keyboardRange);
 }
 
 function play(){
@@ -79,43 +94,24 @@ function play(){
   playLevelNotes();
 }
 
-function pickNotes(){
-
-}
-
+function pickNotes(){}
 
 function keyColour(name){
 return name.indexOf('♯') > -1 ? 'black' : 'white'; 
 }
 
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+var keyboardRange = document.createElement('input');
+keyboardRange.type ='range';
+keyboardRange.min = 2;
+keyboardRange.max=80;
+keyboardRange.step=1;
+keyboardRange.value = 12;
 
+keyboardRange.onchange = ()=> createKeyboard();
 var notes = [];
 var keyElements = [];
-//
-var started = false;
-var animationCount = 0;
-var middleC = 40;
-var noOfKeys = 10;
-var middlePosition = (Math.ceil(noOfKeys/2));
-var keyset = pianoKeys.filter(x => x.number >= middleC-middlePosition && x.number <= middleC+middlePosition-1);
-var level = 1;
 
-const keys = 
-keyset.map((x,i)=>{
-  x.id=i;
-  x.name=x.scientific;
-  x.color=keyColour(x.scientific);
-  return x;
-}).reverse();
-
-
-var sequence = keys.filter(x=>x.name>1);
 var keyElem = null;
-
-var colorCount = 0;
-var frame = 0;
-var frameL = 199; //5,7,11,37,59, 131, 137,199 (prime number selection)
 
 var waveSelect = document.createElement('select');
 waveSelect.options.add(new Option("square","square"));
@@ -127,31 +123,10 @@ waveSelect.onchange = () => {
   oscillator.type = waveSelect.value;
 }
 
-var levelSelect = document.createElement('select');
-
-var levelOptions = [1,2,3,4,5].map((x,i)=>{
-  var option = document.createElement('option');
-  option.value = x;
-  option.id = 'level-'+x;
-  option.append(document.createTextNode(x));
-  option.selected = i==0 ? true: false;
-  option.disabled = i > 0 ? true : false;
-  levelSelect.append(option);
-  return option;
-})
-
-levelSelect.onchange = () => {
-  level = parseInt(levelSelect.value);
-}
-
-var levelSelectLabel = document.createElement('label');
-levelSelectLabel.append(document.createTextNode('level '),levelSelect)
-
 var allowButton = document.createElement('button');
 allowButton.append(document.createTextNode('Keyboard'));
 document.getElementById('container').append(allowButton);
-var randomButton = document.createElement('button');
-randomButton.append(document.createTextNode('random keys ∞'));
+
 var playButton = document.createElement('button');
 playButton.append(document.createTextNode('Play'));
 
@@ -163,12 +138,3 @@ playButton.onclick = () => {
   playButton.disabled = true;
   play();
 }
-
-
-
-
-
-
-
-
-
