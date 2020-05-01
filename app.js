@@ -60,7 +60,7 @@ keys.forEach((k,i) => {
   keyElements.push(key);
 });
 
-document.getElementById('container').append(keyboard,levelSelectLabel,playButton);
+document.getElementById('container').append(keyboard);
 }
 
 function play(){
