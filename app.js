@@ -54,7 +54,7 @@ keys.forEach((k,i) => {
 
   key.onmousedown = (e) => {
     key.style.cursor = 'grabbing';
-    key.style.backgroundColor = `red`;
+    key.style.backgroundColor = `gold`;
     oscillator.frequency.setValueAtTime(parseInt(k.hz), audioCtx.currentTime);
     gainNode.gain.exponentialRampToValueAtTime(
         1, audioCtx.currentTime + 0.01
@@ -87,7 +87,7 @@ function play(){
   notes = keyElements.shuffle().slice(0,level+1)
   .sort((a,b)=> parseInt(a.id) - parseInt(b.id));
   notes.forEach(x=>{
-    x.style.borderColor='red';
+    x.style.borderColor='gold';
     x.style.borderWidth = '2px';
     x.style.borderStyle = 'solid';
   });
