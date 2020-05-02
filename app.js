@@ -1,15 +1,11 @@
-// for(i = 0; i < 1114112; i++){
-//     document.body.append(document.createTextNode(String.fromCharCode(i)));
-// }
-
 function createKeyboard(){
   const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   
   allowButton.style.display='none';
   var keyboard = document.createElement('ul');
-  keyboard.style.padding = '0';
-  keyboard.style.width='100%';
-  keyboard.id = keyboard;
+//  keyboard.style.padding = '0';
+//  keyboard.style.width='100%';
+  keyboard.id = 'keyboard'; 
 
   var middleC = 40;
   var noOfKeys = keyboardRange.value;
@@ -19,7 +15,7 @@ function createKeyboard(){
 const keys = 
 keyset.map((x,i)=>{
   x.id=i;
-  x.name=x.scientific;
+  x.name=(x.scientific.split('/').length>1?x.scientific.split('/')[0] : x.scientific).substring(0,2);
   x.color=keyColour(x.scientific);
   return x;
 }).reverse();
@@ -36,15 +32,15 @@ keys.forEach((k,i) => {
   var key = document.createElement('li');
   key.id = k.id;
   key.dataset.name = k.name;
-  key.style.display = 'inline-block';
   key.style.borderWidth = '1px';
-  key.style.borderStyle = 'dotted';
+  key.style.borderStyle = 'solid';
   let ogBorderColor = 'black';
   key.style.borderColor = ogBorderColor;
 
-  key.style.width = (Math.floor(99/noOfKeys)).toString().concat('%');
+  key.style.width = (Math.floor(90/noOfKeys)).toString().concat('%');
+  key.style.marginLeft = (k.color=='white' && keys[i-1]!=undefined && keys[i-1].color=='white') ? 0 : (-(Math.floor(90/noOfKeys))/4).toString().concat('%');
   key.style.cursor = 'grab';
-  key.style.height = k.color === 'black' ? '30%' : '50%';
+  key.style.height = k.color === 'black' ? '70%' : '100%';
   key.className = k.color;
   let ogBgColor = k.color;
   key.style.backgroundColor = ogBgColor;
@@ -82,7 +78,7 @@ function play(){
   keyElements.forEach(x=>{
     x.style.borderColor='black';
     x.style.borderWidth = '1px';
-    x.style.borderStyle = 'dotted';
+    x.style.borderStyle = 'solid';
   });
   notes = keyElements.shuffle().slice(0,level+1)
   .sort((a,b)=> parseInt(a.id) - parseInt(b.id));
@@ -103,7 +99,7 @@ return name.indexOf('♯') > -1 ? 'black' : 'white';
 var keyboardRange = document.createElement('input');
 keyboardRange.type ='range';
 keyboardRange.min = 2;
-keyboardRange.max=80;
+keyboardRange.max=88;
 keyboardRange.step=1;
 keyboardRange.value = 12;
 
@@ -130,9 +126,8 @@ document.getElementById('container').append(allowButton);
 var playButton = document.createElement('button');
 playButton.append(document.createTextNode('Play'));
 
-allowButton.onclick = () => {
-  createKeyboard();
-}
+allowButton.onclick = () => createKeyboard();
+
 
 playButton.onclick = () => {
   playButton.disabled = true;

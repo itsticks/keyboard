@@ -2,30 +2,54 @@
 <head>
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-<title>test your ear for relative pitch</title>
+<title>♫ pitch test</title>
 <style>
+    
     * {padding:0;margin:0}
     
     @keyframes colorchange {
   0%   {color: black;}
-  25%  {color: silver;}
-  50%  {color: greenyellow;}
+  25%  {color: rgb(20, 19, 19);}
+  50%  {color: rgb(27, 27, 27);}
   100% {color: black;}
 }
 
-/* The element to apply the animation to */
 .colorchange-animation {
   animation-name: colorchange;
   animation-duration: 8s;
   animation-iteration-count:infinite;
 }
+
+ul#keyboard {
+  display: flex;
+  flex-direction: row;
+  height:60%;
+  justify-content: center;
+}
+
+ul#keyboard li {
+    list-style-type:none;
+
+}
+
+ul#keyboard li.white {
+    height:500px;
+    z-index:1;
+}
+
+ul#keyboard li.black {
+    height:300px;
+    z-index:2;
+}
+
+
 </style>
 </head>
 
-<body>
+<body style='width:100%;text-align:center;'>
+    <h1><span class='colorchange-animation' >♫</span> pitch test</h1>
 
 <div id='container' style='width:100%;text-align:center;margin:0px auto;'>
-    <h1><span class='colorchange-animation'>♫</span> pitch test</h1>
 </div>
 
 <script src='helpers.js'></script>
