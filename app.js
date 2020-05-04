@@ -8,7 +8,7 @@ function createKeyboard(){
   keyboard.id = 'keyboard'; 
 
   var middleC = 40;
-  var noOfKeys = keyboardRange.value;
+  var noOfKeys = keyboardLength.value;
   var middlePosition = (Math.ceil(noOfKeys/2));
   var keyset = pianoKeys.filter(x => x.number >= middleC-middlePosition && x.number <= middleC+middlePosition-1);
 
@@ -71,7 +71,7 @@ keys.forEach((k,i) => {
   keyElements.push(key);
 });
 document.getElementById('container').innerHTML = "";
-document.getElementById('container').append(keyboard, keyboardRange);
+document.getElementById('container').append(keyboard, keyboardLengthLabel, waveLabel);
 }
 
 function play(){
@@ -96,27 +96,33 @@ function keyColour(name){
 return name.indexOf('♯') > -1 ? 'black' : 'white'; 
 }
 
-var keyboardRange = document.createElement('input');
-keyboardRange.type ='range';
-keyboardRange.min = 2;
-keyboardRange.max=88;
-keyboardRange.step=1;
-keyboardRange.value = 12;
+var keyboardLengthLabel = document.createElement('label');
+var keyboardLength = document.createElement('input');
+keyboardLength.type ='range';
+keyboardLength.min = 2;
+keyboardLength.max=88;
+keyboardLength.step=1;
+keyboardLength.value = 12;
 
-keyboardRange.onchange = ()=> createKeyboard();
+keyboardLengthLabel.append(document.createTextNode('keyboardLength '),keyboardLength)
+
+keyboardLength.onchange = ()=> createKeyboard();
 var notes = [];
 var keyElements = [];
 
 var keyElem = null;
 
+var waveLabel = document.createElement('label');
 var waveSelect = document.createElement('select');
 waveSelect.options.add(new Option("square","square"));
 waveSelect.options.add(new Option("sine","sine"));
 waveSelect.options.add(new Option("sawtooth","sawtooth"));
 waveSelect.options.add(new Option("triangle","triangle", true, true));
 
+waveLabel.append(document.createTextNode('waveForm '),waveSelect)
+
 waveSelect.onchange = () => {
-  oscillator.type = waveSelect.value;
+  createKeyboard()
 }
 
 var allowButton = document.createElement('button');
