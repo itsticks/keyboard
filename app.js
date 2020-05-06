@@ -1,5 +1,24 @@
+function makeDistortionCurve(amount) {
+  var k = parseInt(amount),
+    n_samples = 44100,
+    curve = new Float32Array(n_samples),
+    deg = Math.PI / 180,
+    i = 0,
+    x;
+  for ( ; i < n_samples; ++i ) {
+    x = i * 2 / n_samples - 1;
+    curve[i] = ( 3 + k ) * x * 20 * deg / ( Math.PI + k * Math.abs(x) );
+  }
+  console.log(curve);
+  return curve;
+};
+
 function createKeyboard(){
-  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if(audioCtx!==null){
+  audioCtx.close()
+  }
+
+   audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   
   allowButton.style.display='none';
   var keyboard = document.createElement('ul');
@@ -24,8 +43,13 @@ keyset.map((x,i)=>{
 keys.forEach((k,i) => {
   let oscillator = audioCtx.createOscillator();
   let gainNode = audioCtx.createGain();
+  let distortionNode = audioCtx.createWaveShaper();
+  distortionNode.curve = makeDistortionCurve(distortion.value);
+  distortionNode.oversample = '4x';
+  gainNode.gain.value = masterVolume.value;
   oscillator.type = waveSelect.value;
-  oscillator.connect(gainNode);
+  oscillator.connect(distortionNode);
+  distortionNode.connect(gainNode);
   gainNode.connect(audioCtx.destination);
   gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
   oscillator.start();
@@ -53,7 +77,7 @@ keys.forEach((k,i) => {
     key.style.backgroundColor = `gold`;
     oscillator.frequency.setValueAtTime(parseInt(k.hz), audioCtx.currentTime);
     gainNode.gain.exponentialRampToValueAtTime(
-        1, audioCtx.currentTime + 0.01
+        masterVolume.value, audioCtx.currentTime + 0.01
     );     
     gainNode.gain.exponentialRampToValueAtTime(
         0.00001, audioCtx.currentTime + 4.3
@@ -71,7 +95,7 @@ keys.forEach((k,i) => {
   keyElements.push(key);
 });
 document.getElementById('container').innerHTML = "";
-document.getElementById('container').append(keyboard, keyboardLengthLabel, waveLabel);
+document.getElementById('container').append(keyboard, keyboardLengthLabel, waveLabel, distortionLabel, masterVolumeLabel);
 }
 
 function play(){
@@ -95,6 +119,7 @@ function pickNotes(){}
 function keyColour(name){
 return name.indexOf('♯') > -1 ? 'black' : 'white'; 
 }
+var audioCtx = null;
 
 var keyboardLengthLabel = document.createElement('label');
 var keyboardLength = document.createElement('input');
@@ -103,10 +128,29 @@ keyboardLength.min = 2;
 keyboardLength.max=88;
 keyboardLength.step=1;
 keyboardLength.value = 12;
-
 keyboardLengthLabel.append(document.createTextNode('keyboardLength '),keyboardLength)
-
 keyboardLength.onchange = ()=> createKeyboard();
+
+var masterVolumeLabel = document.createElement('label');
+var masterVolume = document.createElement('input');
+masterVolume.type ='range';
+masterVolume.min = 0;
+masterVolume.max=1;
+masterVolume.step=0.01;
+masterVolume.value = 0.5;
+masterVolumeLabel.append(document.createTextNode('masterVolume '),masterVolume)
+masterVolume.onchange = ()=> createKeyboard();
+
+var distortionLabel = document.createElement('label');
+var distortion = document.createElement('input');
+distortion.type ='range';
+distortion.min = 100;
+distortion.max=2000;
+distortion.step=50;
+distortion.value = 300;
+distortionLabel.append(document.createTextNode('distortion '),distortion)
+distortion.onchange = ()=> {createKeyboard();console.log(distortion.value)}
+
 var notes = [];
 var keyElements = [];
 
