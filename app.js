@@ -9,7 +9,6 @@ function makeDistortionCurve(amount) {
     x = i * 2 / n_samples - 1;
     curve[i] = ( 3 + k ) * x * 20 * deg / ( Math.PI + k * Math.abs(x) );
   }
-  console.log(curve);
   return curve;
 };
 
@@ -42,6 +41,7 @@ keys.forEach((k,i) => {
   let oscillator = audioCtx.createOscillator();
   let gainNode = audioCtx.createGain();
   let distortionNode = audioCtx.createWaveShaper();
+
   distortionNode.curve = makeDistortionCurve(distortion.value);
   distortionNode.oversample = '4x';
   gainNode.gain.value = masterVolume.value;
@@ -49,6 +49,12 @@ keys.forEach((k,i) => {
   oscillator.connect(distortionNode);
   distortionNode.connect(gainNode);
   gainNode.connect(audioCtx.destination);
+  for(var i =0;i<delayFeedback.value;i++){
+    var delayNode = audioCtx.createDelay(parseInt(5.0));
+    delayNode.delayTime.setValueAtTime(delayTime.value, audioCtx.currentTime + (delayTime.value*i));
+    gainNode.connect(delayNode);
+    delayNode.connect(audioCtx.destination);
+  }
   gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
   oscillator.start();
   var key = document.createElement('li');
@@ -97,7 +103,7 @@ keys.forEach((k,i) => {
   keyElements.push(key);
 });
 document.getElementById('container').innerHTML = "";
-document.getElementById('container').append(keyboard, masterVolumeLabel, waveLabel, distortionLabel,keyboardLengthLabel);
+document.getElementById('container').append(keyboard, masterVolumeLabel, waveLabel, distortionLabel,delayTimeLabel,delayFeedbackLabel,keyboardLengthLabel);
 }
 
 function play(){
@@ -151,11 +157,30 @@ distortion.max=400;
 distortion.step=1;
 distortion.value = 200;
 distortionLabel.append(document.createTextNode('distortion '),distortion)
-distortion.onchange = ()=> {createKeyboard();console.log(distortion.value)}
+distortion.onchange = ()=> {createKeyboard();}
+
+var delayTimeLabel = document.createElement('label');
+var delayTime = document.createElement('input');
+delayTime.type ='range';
+delayTime.min = 0.0;
+delayTime.max=5.0;
+delayTime.step=0.01;
+delayTime.value = 0.0;
+delayTimeLabel.append(document.createTextNode('delayTime '),delayTime);
+delayTime.onchange = ()=> {createKeyboard();}
+
+var delayFeedbackLabel = document.createElement('label');
+var delayFeedback = document.createElement('input');
+delayFeedback.type ='range';
+delayFeedback.min = 0;
+delayFeedback.max=10;
+delayFeedback.step=1;
+delayFeedback.value = 0;
+delayFeedbackLabel.append(document.createTextNode('delayFeedback '),delayFeedback);
+delayFeedback.onchange = ()=> {createKeyboard();}
 
 var notes = [];
 var keyElements = [];
-
 var keyElem = null;
 
 var waveLabel = document.createElement('label');
@@ -179,7 +204,6 @@ var playButton = document.createElement('button');
 playButton.append(document.createTextNode('Play'));
 
 allowButton.onclick = () => createKeyboard();
-
 
 playButton.onclick = () => {
   playButton.disabled = true;
