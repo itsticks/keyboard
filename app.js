@@ -22,8 +22,6 @@ function createKeyboard(){
   
   allowButton.style.display='none';
   var keyboard = document.createElement('ul');
-//  keyboard.style.padding = '0';
-//  keyboard.style.width='100%';
   keyboard.id = 'keyboard'; 
 
   var middleC = 40;
@@ -69,8 +67,12 @@ keys.forEach((k,i) => {
   let ogBgColor = k.color;
   key.style.backgroundColor = ogBgColor;
   key.style.color = k.color === 'black' ? 'white' : 'black';
-  key.append(document.createTextNode(k.name));
-  key.innerHTML = k.name;
+  let keyTextSpan = document.createElement('div');
+  keyTextSpan.style.position = 'relative';
+  keyTextSpan.style.bottom = 0;
+  keyTextSpan.append(document.createTextNode(k.name));  
+  key.append(keyTextSpan);
+  //key.innerHTML = k.name;
 
   key.onmousedown = (e) => {
     key.style.cursor = 'grabbing';
@@ -95,7 +97,7 @@ keys.forEach((k,i) => {
   keyElements.push(key);
 });
 document.getElementById('container').innerHTML = "";
-document.getElementById('container').append(keyboard, keyboardLengthLabel, waveLabel, distortionLabel, masterVolumeLabel);
+document.getElementById('container').append(keyboard, masterVolumeLabel, waveLabel, distortionLabel,keyboardLengthLabel);
 }
 
 function play(){
@@ -128,7 +130,7 @@ keyboardLength.min = 2;
 keyboardLength.max=88;
 keyboardLength.step=1;
 keyboardLength.value = 12;
-keyboardLengthLabel.append(document.createTextNode('keyboardLength '),keyboardLength)
+keyboardLengthLabel.append(document.createTextNode('sizeOfKeyboard '),keyboardLength)
 keyboardLength.onchange = ()=> createKeyboard();
 
 var masterVolumeLabel = document.createElement('label');
@@ -138,16 +140,16 @@ masterVolume.min = 0;
 masterVolume.max=1;
 masterVolume.step=0.01;
 masterVolume.value = 0.5;
-masterVolumeLabel.append(document.createTextNode('masterVolume '),masterVolume)
+masterVolumeLabel.append(document.createTextNode('volume '),masterVolume)
 masterVolume.onchange = ()=> createKeyboard();
 
 var distortionLabel = document.createElement('label');
 var distortion = document.createElement('input');
 distortion.type ='range';
 distortion.min = 100;
-distortion.max=2000;
-distortion.step=50;
-distortion.value = 300;
+distortion.max=400;
+distortion.step=1;
+distortion.value = 200;
 distortionLabel.append(document.createTextNode('distortion '),distortion)
 distortion.onchange = ()=> {createKeyboard();console.log(distortion.value)}
 
@@ -163,7 +165,7 @@ waveSelect.options.add(new Option("sine","sine"));
 waveSelect.options.add(new Option("sawtooth","sawtooth"));
 waveSelect.options.add(new Option("triangle","triangle", true, true));
 
-waveLabel.append(document.createTextNode('waveForm '),waveSelect)
+waveLabel.append(document.createTextNode('wave '),waveSelect)
 
 waveSelect.onchange = () => {
   createKeyboard()
