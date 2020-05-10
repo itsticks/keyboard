@@ -23,6 +23,7 @@ function createKeyboard(){
   var keyboard = document.createElement('ul');
   keyboard.id = 'keyboard'; 
 
+  var delayNodes = [];
   var middleC = 40;
   var noOfKeys = keyboardLength.value;
   var middlePosition = (Math.ceil(noOfKeys/2));
@@ -40,21 +41,26 @@ keyset.map((x,i)=>{
 keys.forEach((k,i) => {
   let oscillator = audioCtx.createOscillator();
   let gainNode = audioCtx.createGain();
+  let delayFeedbackNode = audioCtx.createGain();
+  let delayNode  = audioCtx.createDelay(parseInt(5.0));
   let distortionNode = audioCtx.createWaveShaper();
 
-  distortionNode.curve = makeDistortionCurve(distortion.value);
+  delayNode.delayTime.setValueAtTime(parseInt(delayTime.value), audioCtx.currentTime);
+  delayFeedbackNode.gain.value = parseInt(delayFeedback.value);
+  
+  distortionNode.curve = makeDistortionCurve(parseInt(distortion.value));
   distortionNode.oversample = '4x';
   gainNode.gain.value = masterVolume.value;
   oscillator.type = waveSelect.value;
   oscillator.connect(distortionNode);
+
   distortionNode.connect(gainNode);
+
+  gainNode.connect(delayNode);
+  delayNode.connect(delayFeedbackNode);
+  delayFeedbackNode.connect(delayNode);
   gainNode.connect(audioCtx.destination);
-  for(var i =0;i<delayFeedback.value;i++){
-    var delayNode = audioCtx.createDelay(parseInt(5.0));
-    delayNode.delayTime.setValueAtTime(delayTime.value, audioCtx.currentTime + (delayTime.value*i));
-    gainNode.connect(delayNode);
-    delayNode.connect(audioCtx.destination);
-  }
+  delayNode.connect(audioCtx.destination);
   gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
   oscillator.start();
   var key = document.createElement('li');
@@ -85,7 +91,7 @@ keys.forEach((k,i) => {
     key.style.backgroundColor = `gold`;
     oscillator.frequency.setValueAtTime(parseInt(k.hz), audioCtx.currentTime);
     gainNode.gain.exponentialRampToValueAtTime(
-        masterVolume.value, audioCtx.currentTime + 0.01
+        parseFloat(masterVolume.value), audioCtx.currentTime + 0.01
     );     
     gainNode.gain.exponentialRampToValueAtTime(
         0.00001, audioCtx.currentTime + 4.3
@@ -165,7 +171,7 @@ delayTime.type ='range';
 delayTime.min = 0.0;
 delayTime.max=5.0;
 delayTime.step=0.01;
-delayTime.value = 0.0;
+delayTime.value = 1.0;
 delayTimeLabel.append(document.createTextNode('delayTime '),delayTime);
 delayTime.onchange = ()=> {createKeyboard();}
 
@@ -173,9 +179,9 @@ var delayFeedbackLabel = document.createElement('label');
 var delayFeedback = document.createElement('input');
 delayFeedback.type ='range';
 delayFeedback.min = 0;
-delayFeedback.max=10;
-delayFeedback.step=1;
-delayFeedback.value = 0;
+delayFeedback.max=1;
+delayFeedback.step=0.01;
+delayFeedback.value = 0.1;
 delayFeedbackLabel.append(document.createTextNode('delayFeedback '),delayFeedback);
 delayFeedback.onchange = ()=> {createKeyboard();}
 
