@@ -1,16 +1,18 @@
 <html>
 <head>
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-<title>♫ pitch test</title>
+<title>♫</title>
 <style>
     
-    * {padding:0;margin:0}
+* {
+    padding:0;
+    margin:0;
+}
     
-    @keyframes colorchange {
+@keyframes colorchange {
   0%   {color: black;}
-  25%  {color: rgb(20, 19, 19);}
-  50%  {color: rgb(27, 27, 27);}
+  50%  {color: seagreen;}
+  75%  {color: gold;}
   100% {color: black;}
 }
 
@@ -25,11 +27,11 @@ ul#keyboard {
   flex-direction: row;
   height:60%;
   justify-content: center;
+  margin-bottom: 10px;
 }
 
 ul#keyboard li {
     list-style-type:none;
-
 }
 
 ul#keyboard li.white {
@@ -42,21 +44,25 @@ ul#keyboard li.black {
     z-index:2;
 }
 
-label {display:block}
+label {
+    display:block;
+}
+
+h1#run {
+    cursor:grab;
+    font-size: 13em;
+}
 
 </style>
 </head>
 
 <body style='width:100%;text-align:center;'>
-    <h1><span class='colorchange-animation' >♫</span> pitch test</h1>
-
-<div id='container' style='width:100%;text-align:center;margin:0px auto;'>
-</div>
+<h1 id='run'><span class='colorchange-animation'>♫</span></h1>
+<div id='container' style='width:100%;text-align:center;margin:0px auto;'></div>
 
 <script src='helpers.js'></script>
 <script src='pianoKeys.js'></script>
 <script src='app.js'></script>
-
 </body>
 
 </html>

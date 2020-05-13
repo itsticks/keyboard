@@ -1,3 +1,26 @@
+function FeedbackDelayNode(context, delay, feedback){
+  this.filterNode = context.createBiquadFilter();
+  this.convolver = context.createConvolver();
+
+  this.filterNode.frequency.value = 5000;
+  this.delayTime.value = delay;
+  this.gainNode = context.createGain();
+  this.gainNode.gain.value = feedback;
+  this.connect(this.filterNode);
+  this.filterNode.connect(this.gainNode);
+  this.gainNode.connect(this);
+}
+
+function FeedbackDelayFactory(context, delayTime, feedback){
+  var delay = context.createDelay(delayTime + 1);
+  FeedbackDelayNode.call(delay, context, delayTime, feedback);
+  return delay;
+}
+
+AudioContext.prototype.createFeedbackDelay = function(delay, feedback){
+  return FeedbackDelayFactory(this, delay, feedback);
+};
+
 function makeDistortionCurve(amount) {
   var k = parseInt(amount),
     n_samples = 44100,
@@ -23,7 +46,6 @@ function createKeyboard(){
   var keyboard = document.createElement('ul');
   keyboard.id = 'keyboard'; 
 
-  var delayNodes = [];
   var middleC = 40;
   var noOfKeys = keyboardLength.value;
   var middlePosition = (Math.ceil(noOfKeys/2));
@@ -42,23 +64,22 @@ keys.forEach((k,i) => {
   let oscillator = audioCtx.createOscillator();
   let gainNode = audioCtx.createGain();
   let delayFeedbackNode = audioCtx.createGain();
-  let delayNode  = audioCtx.createDelay(parseInt(5.0));
+  let delayNode  = audioCtx.createFeedbackDelay(2,parseFloat(delayFeedback.value))// audioCtx.createDelay(parseInt(5.0));
   let distortionNode = audioCtx.createWaveShaper();
-
   delayNode.delayTime.setValueAtTime(parseInt(delayTime.value), audioCtx.currentTime);
   delayFeedbackNode.gain.value = parseInt(delayFeedback.value);
   
-  distortionNode.curve = makeDistortionCurve(parseInt(distortion.value));
+  distortionNode.curve = makeDistortionCurve(parseFloat(distortion.value));
   distortionNode.oversample = '4x';
   gainNode.gain.value = masterVolume.value;
   oscillator.type = waveSelect.value;
   oscillator.connect(distortionNode);
 
   distortionNode.connect(gainNode);
-
   gainNode.connect(delayNode);
-  delayNode.connect(delayFeedbackNode);
-  delayFeedbackNode.connect(delayNode);
+
+  delayNode.connect(gainNode);
+
   gainNode.connect(audioCtx.destination);
   delayNode.connect(audioCtx.destination);
   gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
@@ -181,7 +202,7 @@ delayFeedback.type ='range';
 delayFeedback.min = 0;
 delayFeedback.max=1;
 delayFeedback.step=0.01;
-delayFeedback.value = 0.1;
+delayFeedback.value = 0.7;
 delayFeedbackLabel.append(document.createTextNode('delayFeedback '),delayFeedback);
 delayFeedback.onchange = ()=> {createKeyboard();}
 
@@ -193,8 +214,8 @@ var waveLabel = document.createElement('label');
 var waveSelect = document.createElement('select');
 waveSelect.options.add(new Option("square","square"));
 waveSelect.options.add(new Option("sine","sine"));
-waveSelect.options.add(new Option("sawtooth","sawtooth"));
-waveSelect.options.add(new Option("triangle","triangle", true, true));
+waveSelect.options.add(new Option("triangle","triangle"));
+waveSelect.options.add(new Option("sawtooth","sawtooth", true, true));
 
 waveLabel.append(document.createTextNode('wave '),waveSelect)
 
@@ -202,16 +223,7 @@ waveSelect.onchange = () => {
   createKeyboard()
 }
 
-var allowButton = document.createElement('button');
-allowButton.append(document.createTextNode('Keyboard'));
-document.getElementById('container').append(allowButton);
-
-var playButton = document.createElement('button');
-playButton.append(document.createTextNode('Play'));
+var allowButton = document.getElementById('run');
 
 allowButton.onclick = () => createKeyboard();
 
-playButton.onclick = () => {
-  playButton.disabled = true;
-  play();
-}
