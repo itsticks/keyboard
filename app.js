@@ -42,7 +42,6 @@ function createKeyboard(){
 
    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   
-  allowButton.style.display='none';
   var keyboard = document.createElement('ul');
   keyboard.id = 'keyboard'; 
 
@@ -66,13 +65,7 @@ keys.forEach((k,i) => {
   let delayFeedbackNode = audioCtx.createGain();
   let delayNode  = audioCtx.createFeedbackDelay(2,parseFloat(delayFeedback.value))// audioCtx.createDelay(parseInt(5.0));
   let distortionNode = audioCtx.createWaveShaper();
-  delayNode.delayTime.setValueAtTime(parseInt(delayTime.value), audioCtx.currentTime);
-  delayFeedbackNode.gain.value = parseInt(delayFeedback.value);
-  
-  distortionNode.curve = makeDistortionCurve(parseFloat(distortion.value));
-  distortionNode.oversample = '4x';
-  gainNode.gain.value = masterVolume.value;
-  oscillator.type = waveSelect.value;
+
   oscillator.connect(distortionNode);
 
   distortionNode.connect(gainNode);
@@ -108,6 +101,14 @@ keys.forEach((k,i) => {
   //key.innerHTML = k.name;
 
   key.onmousedown = (e) => {
+    delayNode.delayTime.setValueAtTime(parseInt(delayTime.value), audioCtx.currentTime);
+    delayFeedbackNode.gain.value = parseInt(delayFeedback.value);
+    
+    distortionNode.curve = makeDistortionCurve(parseFloat(distortion.value));
+    distortionNode.oversample = '4x';
+    gainNode.gain.value = masterVolume.value;
+    oscillator.type = waveSelect.value;
+
     key.style.cursor = 'grabbing';
     key.style.backgroundColor = `gold`;
     oscillator.frequency.setValueAtTime(parseInt(k.hz), audioCtx.currentTime);
@@ -158,53 +159,69 @@ var audioCtx = null;
 
 var keyboardLengthLabel = document.createElement('label');
 var keyboardLength = document.createElement('input');
+var keyboardLengthDisplay = document.createElement('span');
 keyboardLength.type ='range';
 keyboardLength.min = 2;
 keyboardLength.max=88;
 keyboardLength.step=1;
 keyboardLength.value = 12;
-keyboardLengthLabel.append(document.createTextNode('sizeOfKeyboard '),keyboardLength)
+keyboardLengthDisplay.innerHTML = keyboardLength.value + " keys"
+keyboardLengthLabel.append(document.createTextNode('sizeOfKeyboard '),keyboardLength,keyboardLengthDisplay)
 keyboardLength.onchange = ()=> createKeyboard();
+keyboardLength.oninput = () => {keyboardLengthDisplay.innerHTML = keyboardLength.value + " keys"}
 
 var masterVolumeLabel = document.createElement('label');
 var masterVolume = document.createElement('input');
+var valueDisplay = document.createElement('span');
 masterVolume.type ='range';
 masterVolume.min = 0;
 masterVolume.max=1;
 masterVolume.step=0.01;
 masterVolume.value = 0.5;
-masterVolumeLabel.append(document.createTextNode('volume '),masterVolume)
-masterVolume.onchange = ()=> createKeyboard();
+valueDisplay.innerHTML = parseInt(masterVolume.value*10);
+masterVolumeLabel.append(document.createTextNode('volume '),masterVolume, valueDisplay)
+// masterVolume.onchange = () => createKeyboard();
+masterVolume.oninput = () => {valueDisplay.innerHTML = parseInt(masterVolume.value*10);}
 
 var distortionLabel = document.createElement('label');
 var distortion = document.createElement('input');
+var distortionValueDisplay = document.createElement('span');
+
 distortion.type ='range';
 distortion.min = 100;
 distortion.max=400;
 distortion.step=1;
 distortion.value = 200;
-distortionLabel.append(document.createTextNode('distortion '),distortion)
-distortion.onchange = ()=> {createKeyboard();}
+distortionValueDisplay.innerHTML = distortion.value
+distortionLabel.append(document.createTextNode('distortion '),distortion, distortionValueDisplay)
+// distortion.onchange = ()=> {createKeyboard();}
+distortion.oninput = ()=>{distortionValueDisplay.innerHTML = distortion.value}
 
 var delayTimeLabel = document.createElement('label');
 var delayTime = document.createElement('input');
+var delayTimeDisplay = document.createElement('span');
 delayTime.type ='range';
 delayTime.min = 0.0;
 delayTime.max=5.0;
 delayTime.step=0.01;
 delayTime.value = 1.0;
-delayTimeLabel.append(document.createTextNode('delayTime '),delayTime);
-delayTime.onchange = ()=> {createKeyboard();}
+delayTimeDisplay.innerHTML = delayTime.value;
+delayTimeLabel.append(document.createTextNode('delayTime '),delayTime,delayTimeDisplay);
+// delayTime.onchange = ()=> {createKeyboard();}
+delayTime.oninput = ()=> {delayTimeDisplay.innerHTML = delayTime.value;}
 
 var delayFeedbackLabel = document.createElement('label');
 var delayFeedback = document.createElement('input');
+var delayFeedbackDisplay = document.createElement('span');
 delayFeedback.type ='range';
 delayFeedback.min = 0;
 delayFeedback.max=1;
 delayFeedback.step=0.01;
 delayFeedback.value = 0.7;
-delayFeedbackLabel.append(document.createTextNode('delayFeedback '),delayFeedback);
-delayFeedback.onchange = ()=> {createKeyboard();}
+delayFeedbackDisplay.innerHTML = delayFeedback.value;
+delayFeedbackLabel.append(document.createTextNode('delayFeedback '),delayFeedback,delayFeedbackDisplay);
+//delayFeedback.onchange = () => {createKeyboard()}
+delayFeedback.oninput = () => {delayFeedbackDisplay.innerHTML = delayFeedback.value;}
 
 var notes = [];
 var keyElements = [];
@@ -219,9 +236,7 @@ waveSelect.options.add(new Option("sawtooth","sawtooth", true, true));
 
 waveLabel.append(document.createTextNode('wave '),waveSelect)
 
-waveSelect.onchange = () => {
-  createKeyboard()
-}
+// waveSelect.onchange = () => {createKeyboard()}
 
 var allowButton = document.getElementById('run');
 
