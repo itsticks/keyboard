@@ -17,6 +17,10 @@ function FeedbackDelayFactory(context, delayTime, feedback){
   return delay;
 }
 
+var AudioContext = window.AudioContext // Default
+    || window.webkitAudioContext // Safari and old versions of Chrome
+    || false; 
+
 AudioContext.prototype.createFeedbackDelay = function(delay, feedback){
   return FeedbackDelayFactory(this, delay, feedback);
 };
@@ -112,12 +116,9 @@ keys.forEach((k,i) => {
     key.style.cursor = 'grabbing';
     key.style.backgroundColor = `gold`;
     oscillator.frequency.setValueAtTime(parseInt(k.hz), audioCtx.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(
-        parseFloat(masterVolume.value), audioCtx.currentTime + 0.01
-    );     
-    gainNode.gain.exponentialRampToValueAtTime(
-        0.00001, audioCtx.currentTime + 4.3
-    );    
+    console.log(parseFloat(masterVolume.value), audioCtx.currentTime + 0.01);
+    gainNode.gain.exponentialRampToValueAtTime(parseFloat(masterVolume.value), audioCtx.currentTime + 0.01);     
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 4.3);    
     setTimeout(function(){
           key.style.cursor = 'grab';
           key.style.opacity = 1;
