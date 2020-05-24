@@ -417,7 +417,7 @@ delayTime.type ='range';
 delayTime.min = 0.0;
 delayTime.max=5.0;
 delayTime.step=0.01;
-delayTime.value = 0.3;
+delayTime.value = 0.7;
 delayTimeDisplay.innerHTML = delayTime.value;
 delayTimeLabel.append(document.createTextNode('delayTime '),delayTime,delayTimeDisplay);
 // delayTime.onchange = ()=> {createKeyboard();}
@@ -430,7 +430,7 @@ delayFeedback.type ='range';
 delayFeedback.min = 0;
 delayFeedback.max=1;
 delayFeedback.step=0.01;
-delayFeedback.value = 0.1;
+delayFeedback.value = 0.4;
 delayFeedbackDisplay.innerHTML = delayFeedback.value;
 delayFeedbackLabel.append(document.createTextNode('delayFeedback '),delayFeedback,delayFeedbackDisplay);
 //delayFeedback.onchange = () => {createKeyboard()}
