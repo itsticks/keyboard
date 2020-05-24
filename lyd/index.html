@@ -1,0 +1,70 @@
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+<meta content="utf-8" http-equiv="encoding">
+<title>♫</title>
+<style>
+    
+* {
+    padding:0;
+    margin:0;
+}
+    
+@keyframes colorchange {
+  0%   {color: black;}
+  50%  {color: seagreen;}
+  75%  {color: gold;}
+  100% {color: black;}
+}
+
+.colorchange-animation {
+  animation-name: colorchange;
+  animation-duration: 8s;
+  animation-iteration-count:infinite;
+}
+
+ul#keyboard {
+  display: flex;
+  flex-direction: row;
+  height:60%;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+ul#keyboard li {
+    list-style-type:none;
+}
+
+ul#keyboard li.white {
+    height:500px;
+    z-index:1;
+}
+
+ul#keyboard li.black {
+    height:300px;
+    z-index:2;
+}
+
+label {
+    display:block;
+}
+
+h1#run {
+    cursor:grab;
+    font-size: 3em;
+}
+
+</style>
+</head>
+
+<body style='width:100%;text-align:center;'>
+<h1 id='run'><span class='colorchange-animation'>♫</span></h1>
+<div id='container' style='width:100%;text-align:center;margin:0px auto;'></div>
+
+<script src='helpers.js'></script>
+<script src='pianoKeys.js'></script>
+<script src='app.js'></script>
+</body>
+
+</html>
