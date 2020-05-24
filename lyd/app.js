@@ -4,157 +4,157 @@ var happyBirthdayLydia = {
       'key':'G3',
       'len':2,
       'syl':'ha',
-      'pic':'img.jpg'
+      'pic':'A.JPG'
     },
     {
       'key':'G3',
       'len':2,
       'syl':'ha',
-      'pic':'img.jpg'
+      'pic':'B.JPG'
     },
     {
       'key':'G3',
       'len':1,
       'syl':'ppy',
-      'pic':'img.jpg'
+      'pic':'C.JPG'
     },
     {
       'key':'A4',
       'len':2,
       'syl':'birth',
-      'pic':'img.jpg'
+      'pic':'D.JPG'
     },
     {
       'key':'G3',
       'len':2,
       'syl':'day',
-      'pic':'img.jpg'
+      'pic':'E.JPG'
     },
     {
       'key':'C4',
       'len':2,
       'syl':'to',
-      'pic':'img.jpg'
+      'pic':'F.JPG'
     },
     {
       'key':'B4',
       'len':3,
       'syl':'you',
-      'pic':'img.jpg'
+      'pic':'G.JPG'
     },
     {
       'key':'G3',
       'len':2,
       'syl':'ha',
-      'pic':'img.jpg'
+      'pic':'H.JPG'
     },
     {
       'key':'G3',
       'len':1,
       'syl':'ppy',
-      'pic':'img.jpg'
+      'pic':'I.JPG'
     },
     {
       'key':'A4',
       'len':2,
       'syl':'birth',
-      'pic':'img.jpg'
+      'pic':'J.JPG'
     },
     {
       'key':'G3',
       'len':2,
       'syl':'day',
-      'pic':'img.jpg'
+      'pic':'K.JPG'
     },
     {
       'key':'D4',
       'len':2,
       'syl':'to',
-      'pic':'img.jpg'
+      'pic':'L.JPG'
     },
     {
       'key':'C4',
       'len':3,
       'syl':'youu',
-      'pic':'img.jpg'
+      'pic':'M.JPG'
     },
     {
       'key':'G3',
       'len':2,
       'syl':'ha',
-      'pic':'img.jpg'
+      'pic':'N.JPG'
     },
     {
       'key':'G3',
       'len':2,
       'syl':'ppy',
-      'pic':'img.jpg'
+      'pic':'O.JPG'
     },
     {
       'key':'G4',
       'len':3,
       'syl':'birthday',
-      'pic':'img.jpg'
+      'pic':'P.JPG'
     },
     {
       'key':'E4',
       'len':3,
       'syl':'to',
-      'pic':'img.jpg'
+      'pic':'Q.JPG'
     },
     {
       'key':'C3',
       'len':2,
       'syl':'ly',
-      'pic':'img.jpg'
+      'pic':'R.JPG'
     },
     {
       'key':'B3',
       'len':1,
       'syl':'di',
-      'pic':'img.jpg'
+      'pic':'S.JPG'
     },
     {
       'key':'A3',
       'len':4,
       'syl':'aa',
-      'pic':'img.jpg'
+      'pic':'T.JPG'
     },
     {
       'key':'F3',
       'len':3,
       'syl':'ha',
-      'pic':'img.jpg'
+      'pic':'U.JPG'
     },
     {
       'key':'F3',
       'len':2,
       'syl':'ppy',
-      'pic':'img.jpg'
+      'pic':'V.JPG'
     },
     {
       'key':'E4',
       'len':3,
       'syl':'birth',
-      'pic':'img.jpg'
+      'pic':'W.JPG'
     },
     {
       'key':'C4',
       'len':3,
       'syl':'day',
-      'pic':'img.jpg'
+      'pic':'D.JPG'
     },
     {
       'key':'D4',
       'len':4,
       'syl':'to',
-      'pic':'img.jpg'
+      'pic':'E.JPG'
     },
     {
       'key':'C4',
       'len':4,
       'syl':'you',
-      'pic':'img.jpg'
+      'pic':'A.JPG'
     }
   ]
 }
@@ -173,7 +173,7 @@ function loadImage(index){
       return
     }
   }
-  img.src = song.notes[index].pic;
+  img.src = 'pics/' + song.notes[index].pic;
 }
 
 var loadImages = new Promise((loadImage) => {
@@ -203,7 +203,7 @@ setTimeout(function(){
 function playNote(note){
 document.getElementById(note.key).click();
 document.getElementById('display').innerHTML=note.syl;
-document.body.style.backgroundImage = 'url('+note.pic+')';
+document.body.style.backgroundImage = 'url(pics/'+note.pic+')';
 }
 
 function FeedbackDelayNode(context, delay, feedback){
@@ -322,7 +322,7 @@ keys.forEach((k,i) => {
     oscillator.type = waveSelect.value;
 
     key.style.cursor = 'grabbing';
-    key.style.backgroundColor = `gold`;
+    key.style.backgroundColor = `purple`;
     oscillator.frequency.setValueAtTime(parseInt(k.hz), audioCtx.currentTime);
     console.log(parseFloat(masterVolume.value), audioCtx.currentTime + 0.01);
     gainNode.gain.exponentialRampToValueAtTime(parseFloat(masterVolume.value), audioCtx.currentTime + 0.01);     
@@ -340,7 +340,8 @@ keys.forEach((k,i) => {
   keyElements.push(key);
 });
 document.getElementById('container').innerHTML = "";
-document.getElementById('container').append(keyboard, masterVolumeLabel, waveLabel, distortionLabel,delayTimeLabel,delayFeedbackLabel,keyboardLengthLabel,display);
+document.getElementById('container').append(keyboard, masterVolumeLabel, waveLabel, distortionLabel,delayTimeLabel,delayFeedbackLabel,keyboardLengthLabel);
+document.body.prepend(display);
 }
 
 function play(){
